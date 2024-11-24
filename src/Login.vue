@@ -26,12 +26,15 @@ const signupData = ref({
 //调用后台接口,完成注册
 import { userRegisterService,userLoginService} from '@/api/user.js'
 import { useRouter } from 'vue-router'
+import {useTokenStore} from '@/stores/token.js'
 const router = useRouter();
+const tokenStore = useTokenStore();
 const register = async (e:Event) => {
     e.preventDefault() // 阻止表单默认提交行为
     //registerData是一个响应式对象,如果要获取值,需要.value
     let result = await userRegisterService(signupData.value);
     ElMessage.success(result.data ? result.data : '注册成功');
+
     activeTab.value = 'login';
 
 }
@@ -41,7 +44,8 @@ const login = async (e:Event) => {
     e.preventDefault() // 阻止表单默认提交行为
     //registerData是一个响应式对象,如果要获取值,需要.value
     let result = await userLoginService(loginData.value);
-    ElMessage.success(result.data ? result.data : '登录成功')
+    ElMessage.success('登录成功')
+    tokenStore.setToken(result.data);
     router.push('/');
 }
 </script>
