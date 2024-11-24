@@ -4,59 +4,45 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ElMessage } from 'element-plus'
 
 const activeTab = ref("login")
 
-const loginData = reactive({
-  studentId: '',
+const loginData = ref({
+  id: '',
   password: ''
 })
 
-const signupData = reactive({
-  studentId: '',
+const signupData = ref({
+  id: '',
   name: '',
   password: '',
   major: ''
 })
 
-const handleLogin = async (e: Event) => {
-  e.preventDefault()
-  try {
-    const response = await fetch('http://localhost:8080/doLogin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(loginData)
-    })
-    if (response.ok) {
-      console.log('Login successful')
-    } else {
-      console.error('Login failed')
-    }
-  } catch (error) {
-    console.error('Login error:', error)
-  }
+
+
+
+//调用后台接口,完成注册
+import { userRegisterService,userLoginService} from '@/api/user.js'
+import { useRouter } from 'vue-router'
+const router = useRouter();
+const register = async (e:Event) => {
+    e.preventDefault() // 阻止表单默认提交行为
+    //registerData是一个响应式对象,如果要获取值,需要.value
+    let result = await userRegisterService(signupData.value);
+    ElMessage.success(result.data ? result.data : '注册成功');
+    activeTab.value = 'login';
+
 }
 
-const handleSignup = async (e: Event) => {
-  e.preventDefault()
-  try {
-    const response = await fetch('http://localhost:8080/doLogin/doSignUp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(signupData)
-    })
-    if (response.ok) {
-      console.log('Signup successful')
-    } else {
-      console.error('Signup failed')
-    }
-  } catch (error) {
-    console.error('Signup error:', error)
-  }
+
+const login = async (e:Event) => {
+    e.preventDefault() // 阻止表单默认提交行为
+    //registerData是一个响应式对象,如果要获取值,需要.value
+    let result = await userLoginService(loginData.value);
+    ElMessage.success(result.data ? result.data : '登录成功')
+    router.push('/');
 }
 </script>
 
@@ -76,14 +62,14 @@ const handleSignup = async (e: Event) => {
             <TabsTrigger value="signup">注册</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
-            <form class="space-y-4" @submit="handleLogin">
+            <form class="space-y-4" @submit="login" :model="loginData">
               <div>
                 <label for="login-email" class="block text-sm font-medium text-gray-700">学号</label>
                 <Input 
                   id="login-email" 
                   type="text" 
                   required 
-                  v-model="loginData.studentId"
+                  v-model="loginData.id"
                 />
               </div>
               <div>
@@ -99,14 +85,14 @@ const handleSignup = async (e: Event) => {
             </form>
           </TabsContent>
           <TabsContent value="signup">
-            <form class="space-y-4" @submit="handleSignup">
+            <form class="space-y-4" @submit="register" :model="signupData">
               <div>
                 <label for="signup-email" class="block text-sm font-medium text-gray-700">学号</label>
                 <Input 
                   id="signup-email" 
                   type="text" 
                   required 
-                  v-model="signupData.studentId"
+                  v-model="signupData.id"
                 />
               </div>
               <div>
