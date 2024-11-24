@@ -7,13 +7,15 @@ import router from '@/router';
 </script>
 
 <template>
-
+  <div class="app-wrapper">
     <router-view></router-view>
-
+  </div>
 </template>
 
 <style>
-
-
-
+.app-wrapper {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
 </style>

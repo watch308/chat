@@ -27,10 +27,12 @@ const roleInfo = {
 }
 
 const commonOuterStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
   border: '1px solid var(--semi-color-border)',
-  borderRadius: '16px',
-  margin: '8px 16px',
-  height: 550,
+  borderRadius: '8px',
 }
 
 let id = 0
@@ -91,5 +93,27 @@ const onMessageReset = () => {
 </template>
 
 <style scoped>
+.chat-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-height: 0;
+}
 
+:deep(.semi-chat) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+:deep(.semi-chat-list) {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
 </style>
