@@ -17,3 +17,6 @@ export const userLoginService = (loginData)=>{
         }
     });
 }
+export const userInfoService = ()=>{
+  return request.get('/userInfo');
+}

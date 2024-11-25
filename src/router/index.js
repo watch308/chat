@@ -6,15 +6,17 @@ import History from '@/views/History.vue'
 import Profile from '@/views/Profile.vue'
 import Settings from '@/views/Settings.vue'
 
+import a from '@/a.vue'
 //导入组件
 
-import ChatVue from '@/Chat.vue'
+
 
 
 
 //定义路由关系
 const routes = [
     { path: '/login', component: Login },
+    { path: '/a', component: a },
     {
         path: '/',
         component: Layout,

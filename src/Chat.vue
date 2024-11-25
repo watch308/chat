@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref,onMounted } from 'vue'
+import { ref, onMounted,onBeforeMount } from 'vue'
 import { Chat } from '@kousum/semi-ui-vue'
+import SockJS from 'sockjs-client'  
+import Stomp from 'stompjs'  
 
 const defaultMessage = [
   {
@@ -39,19 +41,78 @@ let id = 0
 const getId = () => `id-${id++}`
 
 const uploadProps = { action: 'https://api.semi.design/upload' }
-const uploadTipProps = { content: '自定义上传按钮提示信息' }
+const uploadTipProps = { content: '自定义上传钮提示信息' }
 
 const message = ref(defaultMessage)
 const mode = ref('bubble')
 const align = ref('leftRight')
 
-const onMessageSend = (content: string) => {
+
+
+
+const user = ref({
+    id: null,
+    name: '',
+    major: ''
+});
+var ws: WebSocket;
+import{userInfoService}from '@/api/user.js'
+onBeforeMount(
+    //连接WebSocket服务端，然后初始化监听事件
+    async (e: Event) => {
+        let result;
+        try{
+            result = await userInfoService();
+            ws = new WebSocket("ws://localhost:8080/websocket/" + result.data.id);
+            wsInit();
+        }
+         catch{
+            console.log("erro")
+         }
+        
+    }
+)
+
+function wsInit() {
+
+    ws.onopen = () => {
+        ws.send("服务已连接");
+        console.log(ws.readyState)
+    }
+    ws.onclose = () => {
+        console.log("服务器关闭")
+        console.log(ws.readyState)
+    }
+    ws.onmessage = (output) => {
+        const ms = { from: 'user', text:output,to:'ai', createAt: Date.now()};
+        return message;
+    }
+    ws.onerror = (error) => {
+        console.log("报错了")
+        console.log(error)
+        console.log(ws.readyState)
+    }
+
+}
+
+const onMessageSend = async (content: string) => {
+  ws.send(content); // 先发送内容
+
+  // 使用 Promise 来等待消息
+  const ms = await new Promise<string>((resolve) => {
+    ws.addEventListener("message", function (event) {
+      console.log("Message from server ", event.data);
+      resolve(event.data); // 解析 Promise
+    });
+  });
+
   const newAssistantMessage = {
     role: 'assistant',
     id: getId(),
     createAt: Date.now(),
-    content: "功能开发中",
-  }
+    content: ms// 使用获取到的消息
+  };
+
   setTimeout(() => {
     message.value = [...message.value, newAssistantMessage]
   }, 200)
@@ -72,6 +133,7 @@ const onMessageReset = () => {
     message.value = [...message.value.slice(0, -1), newLastMessage]
   }, 200)
 }
+
 </script>
 
 <template>
