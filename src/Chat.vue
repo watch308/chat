@@ -3,6 +3,7 @@ import { ref, onMounted,onBeforeMount } from 'vue'
 import { Chat } from '@kousum/semi-ui-vue'
 import SockJS from 'sockjs-client'  
 import Stomp from 'stompjs'  
+import router from '@/router';
 
 const defaultMessage = [
   {
@@ -76,7 +77,7 @@ onBeforeMount(
 function wsInit() {
 
     ws.onopen = () => {
-        ws.send("服务已连接");
+        //ws.send("服务已连接");
         console.log(ws.readyState)
     }
     ws.onclose = () => {
