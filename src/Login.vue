@@ -9,12 +9,12 @@ import { ElMessage } from 'element-plus'
 const activeTab = ref("login")
 
 const loginData = ref({
-  id: '',
+  studentId: '',
   password: ''
 })
 
 const signupData = ref({
-  id: '',
+  studentId: '',
   name: '',
   password: '',
   major: ''
@@ -73,7 +73,7 @@ const login = async (e:Event) => {
                   id="login-email" 
                   type="text" 
                   required 
-                  v-model="loginData.id"
+                  v-model="loginData.studentId"
                 />
               </div>
               <div>
@@ -96,7 +96,7 @@ const login = async (e:Event) => {
                   id="signup-email" 
                   type="text" 
                   required 
-                  v-model="signupData.id"
+                  v-model="signupData.studentId"
                 />
               </div>
               <div>

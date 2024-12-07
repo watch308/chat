@@ -64,7 +64,7 @@ onBeforeMount(
         let result;
         try{
             result = await userInfoService();
-            ws = new WebSocket("ws://localhost:8080/websocket/" + result.data.id);
+            ws = new WebSocket("ws://localhost:8080/websocket/" + result.data.studentId);
             wsInit();
         }
          catch{
@@ -113,12 +113,45 @@ const onMessageSend = async (content: string) => {
     createAt: Date.now(),
     content: ms// 使用获取到的消息
   };
+  
 
   setTimeout(() => {
     message.value = [...message.value, newAssistantMessage]
   }, 200)
 }
 
+
+const onMessageSend2 = async (content: string) => {
+    let ms = ''; 
+    let count = 0;
+    let evtSource = new EventSource(`http://localhost:5173/api/stream?message=${encodeURIComponent(content)}`);  
+    evtSource.onmessage = function(event) { 
+      if (event.data === "END") {
+        evtSource.close();
+        return;
+      } 
+        ms += event.data;  
+        // 创建新的助手消息
+        const newAssistantMessage = {
+            role: 'assistant',
+            id: getId(),
+            createAt: Date.now(),
+            content: ms // 使用获取到的消息
+        };
+        
+        if (count > 0) {
+            message.value[message.value.length - 1] = newAssistantMessage;
+        } else {
+          message.value.push(newAssistantMessage);
+            count++;
+        }
+    };  
+
+    evtSource.onerror = function(event) {  
+        console.error('EventSource failed:', event);   
+    };  
+    
+}
 const onChatsChange = (chats: any[]) => {
   message.value = chats
 }
@@ -148,7 +181,7 @@ const onMessageReset = () => {
       :chats="message"
       :roleConfig="roleInfo"
       @chatsChange="onChatsChange"
-      @messageSend="onMessageSend"
+      @messageSend="onMessageSend2"
       @messageReset="onMessageReset"
       :uploadTipProps="uploadTipProps"
     />

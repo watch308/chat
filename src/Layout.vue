@@ -19,18 +19,6 @@ const menuItems = [
     text: '咨询记录', 
     icon: 'history',
     link: '/history'
-  },
-  { 
-    itemKey: 'profile', 
-    text: '个人信息', 
-    icon: 'user',
-    link: '/profile'
-  },
-  { 
-    itemKey: 'settings', 
-    text: '系统设置', 
-    icon: 'setting',
-    link: '/settings'
   }
 ]
 

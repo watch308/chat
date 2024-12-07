@@ -20,3 +20,18 @@ export const userLoginService = (loginData)=>{
 export const userInfoService = ()=>{
   return request.get('/userInfo');
 }
+
+export const userMessagefoService = ()=>{
+  return request.get('/userMessge');
+}
+export const aiService = (params) => {  
+  // 将 参数对象 转换为查询字符串  
+  const queryString = new URLSearchParams(params).toString();  
+  
+  const url = `/api/ai/stream?${queryString}`;  
+  
+  // 创建 EventSource  
+  const evtSource = new EventSource(url);  
+  
+  return evtSource;  
+}  
